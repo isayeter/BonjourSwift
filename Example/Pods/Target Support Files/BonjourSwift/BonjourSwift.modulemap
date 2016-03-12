@@ -1,6 +1,0 @@
-framework module BonjourSwift {
-  umbrella header "BonjourSwift-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -1,20 +1,10 @@
 # BonjourSwift
 
-[![CI Status](http://img.shields.io/travis/ecnepsnai/BonjourSwift.svg?style=flat)](https://travis-ci.org/ecnepsnai/BonjourSwift)
-[![Version](https://img.shields.io/cocoapods/v/BonjourSwift.svg?style=flat)](http://cocoapods.org/pods/BonjourSwift)
-[![License](https://img.shields.io/cocoapods/l/BonjourSwift.svg?style=flat)](http://cocoapods.org/pods/BonjourSwift)
-[![Platform](https://img.shields.io/cocoapods/p/BonjourSwift.svg?style=flat)](http://cocoapods.org/pods/BonjourSwift)
-
 Easily access Bonjour services and domains in Swift
 
 ## Installation
 
-BonjourSwift is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
-
-```ruby
-pod "BonjourSwift"
-```
+Drag `Bonjour.swift` onto your porject
 
 ## Usage
 
