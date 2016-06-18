@@ -4,7 +4,17 @@ Easily access Bonjour services and domains in Swift
 
 ## Installation
 
-Drag `Bonjour.swift` onto your porject
+### Cocoapods
+
+Add:
+
+pod 'BonjourSwift'
+
+To your pod file. *Make sure you uncomment `use_frameworks!`*
+
+### Manual
+
+Drag `Bonjour.swift` onto your project.
 
 ## Usage
 
@@ -12,15 +22,12 @@ Drag `Bonjour.swift` onto your porject
 
 ```swift
 func startSearch() {
-let bonjour: Bonjour = Bonjour()
-bonjour.delegate = self
-// This will find all HTTP servers - Check out Bonjour.Services for common services
-bonjour.findService(Bonjour.Services.Hypertext_Transfer, domain: Bonjour.LocalDomain)
-}
-
-func servicesFound(services: [NSNetService]) {
-// Do something with these services
-// Note: services may be an empty array
+    let browser: Bonjour = Bonjour()
+    // This will find all HTTP servers - Check out Bonjour.Services for common services
+    browser.findService(Bonjour.Services.Hypertext_Transfer, domain: Bonjour.LocalDomain) { (services) in
+        // Do something with your services!
+        // services will be an empty array if nothing was found
+    }
 }
 ```
 
@@ -28,14 +35,11 @@ func servicesFound(services: [NSNetService]) {
 
 ```swift
 func startSearch() {
-let bonjour: Bonjour = Bonjour()
-bonjour.delegate = self
-bonjour.findDomains()
-}
-
-func domainsFound(domains: [String]) {
-// Do something with these domains
-// Note: domains may be an empty array
+    let browser: Bonjour = Bonjour()
+    bonjour.findDomains { (domains) in
+        // Do something with your domains!
+        // services will be an empty array if nothing was found
+    }
 }
 ```
 

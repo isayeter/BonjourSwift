@@ -22,18 +22,13 @@
 
 import Foundation
 
-@objc protocol BonjourDelegate {
-    optional func servicesFound(services: [NSNetService])
-    optional func domainsFound(domains: [String])
-}
-
 class Bonjour: NSObject, NSNetServiceBrowserDelegate {
-    var delegate: BonjourDelegate!
     var timeout: NSTimeInterval = 1.0
-
+    var serviceFoundClosure: (([NSNetService]) -> Void)!
+    var domainFoundClosure: (([String]) -> Void)!
+    
     // Source: https://developer.apple.com/library/mac/qa/qa1312/_index.html
     struct Services {
-        // swiftlint:disable variable_name
         // Used by Personal File Sharing in the Sharing preference panel starting in Mac OS X 10.2.
         // The Finder browses for AFP servers starting in Mac OS X 10.2.
         static let AppleTalk_Filing: String = "_afpovertcp._tcp."
@@ -100,17 +95,16 @@ class Bonjour: NSObject, NSNetServiceBrowserDelegate {
         static let Remote_Audio_Output: String = "_raop._tcp."
         // Used by the Xcode Service Service in the Apple Server App
         static let Xcode_Server: String = "_xcs2p._tcp."
-        // swiftlint:enable variable_name
     }
     static let LocalDomain: String = "local."
-
+    
     let serviceBrowser: NSNetServiceBrowser = NSNetServiceBrowser()
     var services = [NSNetService]()
     var domains = [String]()
     var isSearching: Bool = false
     var serviceTimeout: NSTimer = NSTimer()
     var domainTimeout: NSTimer = NSTimer()
-
+    
     /// Find all servies matching the given identifer in the given domain
     ///
     /// Calls servicesFound: with any services found
@@ -122,22 +116,23 @@ class Bonjour: NSObject, NSNetServiceBrowserDelegate {
     ///   - identifier: The service identifier. You may use Bonjour.Services for common services
     ///   - domain: The domain name for the service.  You may use Bonjour.LocalDomain
     /// - returns: True if the search was started, false if a search is already running
-    func findService(identifier: String, domain: String) -> Bool {
+    func findService(identifier: String, domain: String, found: ([NSNetService]) -> Void) -> Bool {
         if !isSearching {
             serviceBrowser.delegate = self
             serviceTimeout = NSTimer.scheduledTimerWithTimeInterval(
                 self.timeout,
                 target: self,
-                selector: "noServicesFound",
+                selector: #selector(Bonjour.noServicesFound),
                 userInfo: nil,
                 repeats: false)
             serviceBrowser.searchForServicesOfType(identifier, inDomain: domain)
+            serviceFoundClosure = found
             isSearching = true
             return true
         }
         return false
     }
-
+    
     /// Find all of the browsable domains
     ///
     /// Calls domainsFound: with any domains found
@@ -146,52 +141,53 @@ class Bonjour: NSObject, NSNetServiceBrowserDelegate {
     /// **Please Note:** Only one search can run at a time.
     ///
     /// - returns: True if the search was started, false if a search is already running
-    func findDomains() -> Bool {
+    func findDomains(found: ([String]) -> Void) -> Bool {
         if !isSearching {
             serviceBrowser.delegate = self
             domainTimeout = NSTimer.scheduledTimerWithTimeInterval(
                 self.timeout,
                 target: self,
-                selector: "noDomainsFound",
+                selector: #selector(Bonjour.noDomainsFound),
                 userInfo: nil,
                 repeats: false)
             serviceBrowser.searchForBrowsableDomains()
+            domainFoundClosure = found
             isSearching = true
             return true
         }
         return false
     }
-
+    
     func netServiceBrowser(browser: NSNetServiceBrowser, didFindService service: NSNetService,
-        moreComing: Bool) {
-            serviceTimeout.invalidate()
-            services.append(service)
-            if !moreComing {
-                delegate.servicesFound?(services)
-                serviceBrowser.stop()
-                isSearching = false
-            }
+                           moreComing: Bool) {
+        serviceTimeout.invalidate()
+        services.append(service)
+        if !moreComing {
+            serviceFoundClosure(services)
+            serviceBrowser.stop()
+            isSearching = false
+        }
     }
-
+    
     func noServicesFound() {
-        delegate.servicesFound?([])
+        serviceFoundClosure([])
         serviceBrowser.stop()
         isSearching = false
     }
-
+    
     func netServiceBrowser(browser: NSNetServiceBrowser, didFindDomain domainString: String,
-        moreComing: Bool) {
-            domainTimeout.invalidate()
-            domains.append(domainString)
-            if !moreComing {
-                delegate.domainsFound?(domains)
-                serviceBrowser.stop()
-                isSearching = false
-            }
+                           moreComing: Bool) {
+        domainTimeout.invalidate()
+        domains.append(domainString)
+        if !moreComing {
+            domainFoundClosure(domains)
+            serviceBrowser.stop()
+            isSearching = false
+        }
     }
-
+    
     func noDomainsFound() {
-        delegate.domainsFound?([])
+        domainFoundClosure([])
         serviceBrowser.stop()
         isSearching = false
     }
