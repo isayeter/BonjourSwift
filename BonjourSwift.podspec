@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                  = "BonjourSwift"
-  s.version               = "1.0.0"
+  s.version               = "1.1.0"
   s.summary               = "Easily access Bonjour services and domains in Swift"
 
   s.homepage              = "https://github.com/ecnepsnai/BonjourSwift"
