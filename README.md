@@ -1,6 +1,7 @@
 # BonjourSwift
 
 Easily access Bonjour services and domains in Swift
+Updated to Swift 3.0
 
 ## Installation
 
