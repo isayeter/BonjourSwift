@@ -26,7 +26,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
     var timeout: TimeInterval = 1.0
     var serviceFoundClosure: (([NetService]) -> Void)!
     var domainFoundClosure: (([String]) -> Void)!
-    
+
     // Source: https://developer.apple.com/library/mac/qa/qa1312/_index.html
     struct Services {
         // Used by Personal File Sharing in the Sharing preference panel starting in Mac OS X 10.2.
@@ -97,14 +97,14 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
         static let Xcode_Server: String = "_xcs2p._tcp."
     }
     static let LocalDomain: String = "local."
-    
+
     let serviceBrowser: NetServiceBrowser = NetServiceBrowser()
     var services = [NetService]()
     var domains = [String]()
     var isSearching: Bool = false
     var serviceTimeout: Timer = Timer()
     var domainTimeout: Timer = Timer()
-    
+
     /// Find all servies matching the given identifer in the given domain
     ///
     /// Calls servicesFound: with any services found
@@ -132,7 +132,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
         }
         return false
     }
-    
+
     /// Find all of the browsable domains
     ///
     /// Calls domainsFound: with any domains found
@@ -157,7 +157,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
         }
         return false
     }
-    
+
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService,
                            moreComing: Bool) {
         serviceTimeout.invalidate()
@@ -168,13 +168,13 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
             isSearching = false
         }
     }
-    
+
     func noServicesFound() {
         serviceFoundClosure([])
         serviceBrowser.stop()
         isSearching = false
     }
-    
+
     func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String,
                            moreComing: Bool) {
         domainTimeout.invalidate()
@@ -185,7 +185,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
             isSearching = false
         }
     }
-    
+
     func noDomainsFound() {
         domainFoundClosure([])
         serviceBrowser.stop()
