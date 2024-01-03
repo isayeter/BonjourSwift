@@ -169,7 +169,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
         }
     }
 
-    func noServicesFound() {
+    @objc func noServicesFound() {
         serviceFoundClosure([])
         serviceBrowser.stop()
         isSearching = false
@@ -186,7 +186,7 @@ class Bonjour: NSObject, NetServiceBrowserDelegate {
         }
     }
 
-    func noDomainsFound() {
+    @objc func noDomainsFound() {
         domainFoundClosure([])
         serviceBrowser.stop()
         isSearching = false
